@@ -151,6 +151,20 @@ export default function MiniDrawer({ children }: { children: React.ReactNode }) 
             </DrawerHeader>
             <Divider />
             <List>
+              <ListItem component="div"
+                sx={[
+                  open
+                    ? {
+                      opacity: 1,
+                      fontSize: '10px'
+                    }
+                    : {
+                      opacity: 0,
+                    },
+                ]}
+              >
+                TAGS
+              </ListItem>
               {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
                 <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
@@ -262,6 +276,6 @@ export default function MiniDrawer({ children }: { children: React.ReactNode }) 
           </Box>
         </Box>
       </body>
-    </html>
+    </html >
   );
 }
