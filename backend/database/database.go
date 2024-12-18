@@ -14,7 +14,7 @@ var Db *sql.DB
 
 func ConnectDatabase() {
 
-	err := godotenv.Load()
+	err := godotenv.Load("../.env")
 	if err != nil {
 		fmt.Println("Error is occurred  on .env file please check")
 	}
@@ -24,7 +24,6 @@ func ConnectDatabase() {
 	user := os.Getenv("USER")
 	dbname := os.Getenv("DB_NAME")
 	pass := os.Getenv("PASSWORD")
-
 	// set up postgres sql to open it.
 	psqlSetup := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable", host, port, user, dbname, pass)
 	db, errSql := sql.Open("postgres", psqlSetup)

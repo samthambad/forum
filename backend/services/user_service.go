@@ -7,7 +7,7 @@ import (
 )
 
 func GetAllUsers() ([]models.User, error) {
-	query := "SELECT id, name, email, password FROM users"
+	query := "SELECT id, name, email FROM users;"
 	rows, err := database.Db.Query(query)
 	if err != nil {
 		return nil, err
@@ -17,7 +17,8 @@ func GetAllUsers() ([]models.User, error) {
 	var users []models.User
 	for rows.Next() {
 		var user models.User
-		if err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password); err != nil {
+		// values from each column are passed into the user variables
+		if err := rows.Scan(&user.ID, &user.Name, &user.Email); err != nil {
 			log.Println("Error scanning row:", err)
 			continue
 		}
