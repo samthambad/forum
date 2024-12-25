@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"go_backend/services"
 	"net/http"
 
@@ -22,5 +23,6 @@ func GetPosts(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch posts"})
 		return
 	}
+	fmt.Println("Returning posts:", posts)
 	c.JSON(http.StatusOK, posts)
 }

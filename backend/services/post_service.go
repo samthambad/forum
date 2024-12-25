@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"go_backend/database"
 	"go_backend/models"
 	"log"
@@ -24,6 +25,7 @@ func GetAllPosts() ([]models.Post, error) {
 		}
 		posts = append(posts, post)
 	}
+	fmt.Println("Number of posts", len(posts))
 
 	return posts, nil
 }
