@@ -27,3 +27,7 @@ func GetPosts(c *gin.Context) {
 	fmt.Println("Returning", len(posts), "posts")
 	c.JSON(http.StatusOK, posts)
 }
+
+func CreatePosts(c *gin.Context) {
+
+}
