@@ -1,8 +1,8 @@
 'use client'
-import { Box, List, ListItem, ListItemButton, ListItemText, ListSubheader, Typography } from "@mui/material";
+import { Box, Divider, List, ListItem, ListItemButton, ListItemText, ListSubheader, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 export default function Home() {
-  const [selectedThread, setSelectedThread] = useState<number | null>(null);
+  const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
   const [threads, setPosts] = useState<Thread[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,20 +58,46 @@ export default function Home() {
             >
               {threads.map((thread: Thread) => (
                 <ListItem
-                  key={thread.ID} onClick={() => setSelectedThread(thread.ID)}
+                  key={thread.ID} onClick={() => setSelectedThread(thread)}
                   sx={{
                     "&:hover": { backgroundColor: "#f0f0f0" },
                     backgroundColor:
-                      selectedThread === thread.ID ? "#e0e0e0" : "inherit",
+                      selectedThread?.ID === thread.ID ? "#e0e0e0" : "inherit",
                   }}
                 >
                   <ListItemText
                     primary={thread.Title}
-                    secondary={`${thread.Content.slice(0, 25)}...`}
+                    secondary={`${thread.Content.slice(0, 25)}... ${new Date(thread.CreatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                   />
                 </ListItem>))}
             </List>
           </div>}
+      </Box>
+      <Box
+        sx={{
+          flexGrow: 1, // Takes remaining space
+          p: 3,
+          display: "flex",
+          flexDirection: "column",
+          bgcolor: "white",
+        }}
+      >
+        {selectedThread ? (
+          <>
+            <Typography variant="h5" gutterBottom>
+              {selectedThread.Title}
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+            <Typography>
+
+              {selectedThread.Content}
+            </Typography>
+          </>
+        ) : (
+          <Typography variant="h6" sx={{ textAlign: "center", mt: 4, color: "gray" }}>
+            Select thread to view its content
+          </Typography>
+        )}
       </Box>
     </Box >)
 }
