@@ -18,9 +18,31 @@ const CreateThreadPage = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // something
+        // TODO
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "Title": title,
+                    "Content": content
+                })
+            });
+            if (response.ok) {
+                const result = await response.json();
+                console.log("Thread created successfully:", result);
+                setTitle("");
+                setContent("");
+            } else {
+                console.error("Failed to create thread.");
+            }
+        } catch (error) {
+            console.error("Failed to create thread:", error);
+        }
         console.log("Thread Created", { title, content });
         setTitle("");
         setContent("");
