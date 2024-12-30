@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Deployable Discussion Forum
 
-## Getting Started
+## Use Cases
 
-First, run the development server:
+- Organisations which can make use of an internal forum based platform.
+- In classes to facilitate discussion without privacy & security issues.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Architecture
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+React(Next.js) Frontend + Go Backend with Gin + PGSQL DB. All of this is to be done in a docker container such that users can easily deploy their application with minimal configuration or user intervention.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## UI/UX
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+UI will be following Material UI.
 
-## Learn More
+## Accounts & Profile
 
-To learn more about Next.js, take a look at the following resources:
+Users will be able to create accounts with their email ID. Users will have access to all their activity such as posts and comments.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Threads
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The main way of communication will be through the use of user-created threads. Other users can comment on these threads.
 
-## Deploy on Vercel
+## Search and Tagging
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Threads must be tagged and are searchable for ease of access and clarity in discussion.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Restriction One to Many Communication
+
+I believe this is the best way for knowledge sharing.

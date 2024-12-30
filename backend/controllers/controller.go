@@ -9,13 +9,13 @@ import (
 )
 
 func GetUsers(c *gin.Context) {
-	// users, err := services.GetAllUsers()
+	users, err := services.GetAllUsers()
 	services.GetAllUsers()
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
-	// 	return
-	// }
-	// c.JSON(http.StatusOK, users)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+		return
+	}
+	c.JSON(http.StatusOK, users)
 }
 
 func GetPosts(c *gin.Context) {
