@@ -8,7 +8,7 @@ import (
 )
 
 func GetAllPosts() ([]models.Post, error) {
-	query := "SELECT id, title, description, image, created_by, created_at FROM posts;"
+	query := "SELECT id, title, content, created_by, created_at FROM posts;"
 	rows, err := database.Db.Query(query)
 	if err != nil {
 		return nil, err
@@ -19,7 +19,7 @@ func GetAllPosts() ([]models.Post, error) {
 	for rows.Next() {
 		var post models.Post
 		// values from each column are passed into the user variables
-		if err := rows.Scan(&post.ID, &post.Title, &post.Description, &post.Image, &post.CreatedBy, &post.CreatedAt); err != nil {
+		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedBy, &post.CreatedAt); err != nil {
 			log.Println("Error scanning row:", err)
 			continue
 		}

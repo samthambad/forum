@@ -2,7 +2,7 @@
 import { List, ListItem, ListItemButton, ListSubheader } from "@mui/material";
 import { useEffect, useState } from "react";
 export default function Home() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   useEffect(() => {
@@ -13,8 +13,8 @@ export default function Home() {
           throw new Error("Failed to fetch posts");
         }
         const data = await response.json();
-        console.log(data)
-        setPosts(data.posts);
+        console.log("json data", data)
+        setPosts(data);
       } catch (err) {
         console.log("error fetching")
       } finally {
@@ -24,22 +24,30 @@ export default function Home() {
 
     fetchPosts();
   }, []);
+  interface Post {
+    ID: number;
+    Title: string;
+    Content: string;
+    CreatedBy: number;
+    CreatedAt: Date;
+  }
   if (loading) return <p>Loading...</p>;
   console.log("number of posts:", posts.length)
   return <div>
-    {posts.length == 0 ? "No Posts available" :
-      <div>
-        <ListSubheader component="div" id="nested-list-subheader">
-          Threads
-        </ListSubheader>
-        <List
-          sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-          component="nav"
-          aria-labelledby="nested-list-subheader"
-        >
-          {posts.map((post) => (<ListItemButton>post.title</ListItemButton>))}
-          <ListItemButton>Home</ListItemButton>
-        </List>
-      </div>}
+    <div className="">
+      {posts.length == 0 ? "No Posts available" :
+        <div>
+          <ListSubheader component="div" id="nested-list-subheader">
+            Threads
+          </ListSubheader>
+          <List
+            sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+            component="nav"
+            aria-labelledby="nested-list-subheader"
+          >
+            {posts.map((post: Post) => (<ListItemButton key={post.ID}>{post.Title}</ListItemButton>))}
+          </List>
+        </div>}
+    </div>
   </div >
 }

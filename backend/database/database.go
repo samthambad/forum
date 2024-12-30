@@ -18,7 +18,6 @@ func ConnectDatabase() {
 	if err != nil {
 		fmt.Println("Error is occurred  on .env file please check")
 	}
-	//we read our .env file
 	host := os.Getenv("HOST")
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	user := os.Getenv("USER")

@@ -5,10 +5,9 @@ import (
 )
 
 type Post struct {
-	ID          int
-	Title       string
-	Description string
-	Image       string
-	CreatedBy   int
-	CreatedAt   time.Time
+	ID        int
+	Title     string
+	Content   string
+	CreatedBy int
+	CreatedAt time.Time
 }

@@ -24,6 +24,6 @@ func GetPosts(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch posts"})
 		return
 	}
-	fmt.Println("Returning posts:", posts)
+	fmt.Println("Returning", len(posts), "posts")
 	c.JSON(http.StatusOK, posts)
 }
