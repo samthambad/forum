@@ -34,6 +34,6 @@ func main() {
 		})
 	})
 	router.GET("/all_users", controllers.GetUsers)
-	router.POST("create, controllers.CreateThread")
+	router.POST("/create, controllers.CreateThread")
 	router.Run(":3111") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

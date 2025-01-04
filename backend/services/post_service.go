@@ -7,25 +7,27 @@ import (
 	"log"
 )
 
-func GetAllPosts() ([]models.Post, error) {
-	query := "SELECT id, title, content, created_by, created_at FROM posts;"
+func GetAllThreads() ([]models.Thread, error) {
+	query := "SELECT id, title, content, created_by, created_at FROM threads;"
 	rows, err := database.Db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var posts []models.Post
+	var threads []models.Thread
 	for rows.Next() {
-		var post models.Post
+		var thread models.Thread
 		// values from each column are passed into the user variables
-		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedBy, &post.CreatedAt); err != nil {
+		if err := rows.Scan(&thread.ID, &thread.Title, &thread.Content, &thread.CreatedBy, &thread.CreatedAt); err != nil {
 			log.Println("Error scanning row:", err)
 			continue
 		}
-		posts = append(posts, post)
+		threads = append(threads, thread)
 	}
-	fmt.Println("Number of posts", len(posts))
+	fmt.Println("Number of threads", len(threads))
 
-	return posts, nil
+	return threads, nil
 }
+
+func CreateThread()

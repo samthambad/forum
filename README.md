@@ -7,11 +7,14 @@
 
 ## Architecture
 
+![Diagram](architecture.svg)
+
 React(Next.js) Frontend + Go Backend with Gin + PGSQL DB. All of this is to be done in a docker container such that users can easily deploy their application with minimal configuration or user intervention.
 
 ## UI/UX
 
-UI will be following Material UI.
+UI will use the Material UI component library
+Users will be able to create/comment on threads with Markdown, to help them insert inline images, codeblocks etc.
 
 ## Accounts & Profile
 

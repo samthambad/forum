@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Post struct {
+type Thread struct {
 	ID        int
 	Title     string
 	Content   string
