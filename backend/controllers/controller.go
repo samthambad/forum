@@ -2,16 +2,12 @@ package controllers
 
 import (
 	"fmt"
+	"go_backend/models"
 	"go_backend/services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
-
-type CreateThreadType struct {
-	Title   string `json:"Title" binding:"required"`
-	Content string `json:"Content" binding:"required"`
-}
 
 func GetUsers(c *gin.Context) {
 	users, err := services.GetAllUsers()
@@ -34,28 +30,17 @@ func GetPosts(c *gin.Context) {
 }
 
 func CreateThread(c *gin.Context) {
-	response, err := services.CreateThread()
+	var thread models.CreateThreadType
+	// convert to the struct value
+	if err := c.ShouldBindJSON(&thread); err != nil {
+		fmt.Println(thread)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	err := services.CreateThread(thread)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create thread"})
 		return
 	}
-	// var thread CreateThreadType
-	// if err := c.ShouldBindJSON(&thread); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
-	// 	return
-	// }
-
-	// query := `INSERT INTO threads (title, description) VALUES ($1, $2) RETURNING id`
-	// var threadID int
-	// if err := db.QueryRow(query, thread.Title, thread.Content).Scan(&threadID); err != nil {
-	// 	fmt.Println("Database error:", err)
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert thread into database"})
-	// 	return
-	// }
-
-	// c.JSON(http.StatusCreated, gin.H{
-	// 	"message": "Thread created successfully",
-	// 	"id":      threadID,
-	// })
 
 }

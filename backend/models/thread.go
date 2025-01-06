@@ -11,3 +11,8 @@ type Thread struct {
 	CreatedBy int
 	CreatedAt time.Time
 }
+
+type CreateThreadType struct {
+	Title   string `json:"Title" binding:"required"`
+	Content string `json:"Content" binding:"required"`
+}

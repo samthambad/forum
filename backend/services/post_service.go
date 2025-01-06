@@ -30,4 +30,6 @@ func GetAllThreads() ([]models.Thread, error) {
 	return threads, nil
 }
 
-func CreateThread()
+func CreateThread(threadInput models.CreateThreadType) error {
+
+}
