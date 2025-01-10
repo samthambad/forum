@@ -5,7 +5,20 @@ import (
 	"go_backend/database"
 	"go_backend/models"
 	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
+
+func GetThreads(c *gin.Context) {
+	threads, err := GetAllThreads()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch all threads"})
+		return
+	}
+	fmt.Println("Returning", len(threads), "threads")
+	c.JSON(http.StatusOK, threads)
+}
 
 func GetAllThreads() ([]models.Thread, error) {
 	query := "SELECT id, title, content, created_by, created_at FROM threads;"
@@ -30,6 +43,13 @@ func GetAllThreads() ([]models.Thread, error) {
 	return threads, nil
 }
 
-func CreateThread(threadInput models.CreateThreadType) error {
-
+func CreateThread(c *gin.Context) {
+	var thread models.CreateThreadType
+	// convert to the struct value
+	if err := c.ShouldBindJSON(&thread); err != nil {
+		fmt.Println(thread)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	//TODO
 }
