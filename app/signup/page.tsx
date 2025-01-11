@@ -5,23 +5,21 @@ import { useState } from 'react';
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/login', {
+    const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/signUp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
-
     const data = await response.json();
 
     if (response.ok) {
-      localStorage.setItem('token', data.token); // Save token
-      console.log('User logged in');
+      console.log('User signed up:', data);
     } else {
-      console.error('Login error:', data.message);
+      console.error('Signup error:', data.message);
     }
   };
 
@@ -31,6 +29,7 @@ export default function Login() {
         display: 'flex',
         flexDirection: 'row', // Row layout
         height: '100vh',
+        margin: 0,
       }}
     >
       {/* Left Side: Login Form */}
@@ -45,10 +44,10 @@ export default function Login() {
         }}
       >
         <Typography variant="h2" component="h2" sx={{ marginBottom: 3 }}>
-          Log in
+          Sign Up
         </Typography>
         <form
-          onSubmit={handleLogin}
+          onSubmit={handleSignUp}
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -63,15 +62,29 @@ export default function Login() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            size='small'
             sx={{ marginBottom: 3 }}
           />
           <TextField
             label="Password"
             placeholder="Enter a secure password"
             variant="outlined"
+            size='small'
             value={password}
             type="password"
             onChange={(e) => setPassword(e.target.value)}
+            required
+            sx={{ marginBottom: 3 }}
+          />
+          <TextField
+            label="Confirm Password"
+            placeholder="Enter your password again"
+            variant="outlined"
+            value={passwordConfirm}
+            size='small'
+            type="password"
+            fullWidth
+            onChange={(e) => setPasswordConfirm(e.target.value)}
             required
             sx={{ marginBottom: 3 }}
           />
@@ -79,15 +92,17 @@ export default function Login() {
             <Button
               type="submit"
               variant="contained"
-              color="primary"
               size="small"
               sx={{
+                margin: 0,
                 textTransform: 'none',
                 fontWeight: 'bold',
                 borderRadius: 1,
+                background: "#656565",
+                width: '100%',
               }}
             >
-              Log In
+              Sign Up
             </Button>
           </CardActions>
         </form>
@@ -96,10 +111,10 @@ export default function Login() {
       {/* Right Side: Pattern */}
       <Box
         sx={{
-          flex: 1, // Take up 50% of the screen width
-          backgroundImage: 'linear-gradient(to right, #ffffff, #3498db)', // Example gradient
-          backgroundSize: 'cover', // Adjust pattern size
-          backgroundPosition: 'center', // Center the pattern
+          flex: 1,
+          backgroundImage: 'linear-gradient(to right, #ffffff,  #656565 )',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
         }}
       />
     </Box>
