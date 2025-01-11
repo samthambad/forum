@@ -40,7 +40,7 @@ func main() {
 	})
 	router.GET("/all_users", user.GetUsers)
 	router.POST("/create", thread.CreateThread)
-	router.POST("/create_user", user.CreateUser)
+	router.POST("/signUp", user.CreateUser)
 	router.POST("/check_username", user.CheckUsername)
 	router.Run(":8080")
 }
