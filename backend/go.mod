@@ -1,4 +1,4 @@
-module go_backend
+module go_backend //import path prefix
 
 go 1.23.4
 

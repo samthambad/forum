@@ -1,4 +1,4 @@
-package services
+package user
 
 import (
 	"fmt"
@@ -19,6 +19,9 @@ func GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
+func GetCurrentUser(c *gin.Context) {
+
+}
 func GetAllUsers() ([]models.User, error) {
 	query := "SELECT id, username, email FROM users;"
 	rows, err := database.Db.Query(query)

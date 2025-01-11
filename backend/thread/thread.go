@@ -1,4 +1,4 @@
-package services
+package thread
 
 import (
 	"fmt"
@@ -10,21 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetThreads(c *gin.Context) {
-	threads, err := GetAllThreads()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch all threads"})
-		return
-	}
-	fmt.Println("Returning", len(threads), "threads")
-	c.JSON(http.StatusOK, threads)
-}
-
-func GetAllThreads() ([]models.Thread, error) {
+func GetAllThreads(c *gin.Context) {
 	query := "SELECT id, title, content, created_by, created_at FROM threads;"
 	rows, err := database.Db.Query(query)
 	if err != nil {
-		return nil, err
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database query error"})
+		return
 	}
 	defer rows.Close()
 
@@ -40,7 +31,7 @@ func GetAllThreads() ([]models.Thread, error) {
 	}
 	fmt.Println("Number of threads", len(threads))
 
-	return threads, nil
+	c.JSON(http.StatusOK, threads)
 }
 
 func CreateThread(c *gin.Context) {
@@ -51,5 +42,7 @@ func CreateThread(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
+	createQuery := "INSERT INTO threads (title, content, created_by) VALUES ($1, $2, $3);"
+	_, err := database.Db.Exec(createQuery, thread.Title, thread.Content)
 	//TODO
 }

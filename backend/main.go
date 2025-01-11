@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"os"
 
+	"go_backend/thread"
+	"go_backend/user"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/samthambad/forum/backend/thread"
-	"github.com/samthambad/forum/backend/user"
 )
 
 func main() {
@@ -27,7 +28,11 @@ func main() {
 		AllowCredentials: true,                                                // Allow cookies if needed
 	}))
 	database.ConnectDatabase()
-	router.GET("/all_posts", thread.GetAllThreads)
+	router.GET("/all_posts", func(c *gin.Context) {
+		thread.GetAllThreads(c)
+	})
+	router.GET("/current_user", user.GetCurrentUser)
+	// find the current user in main.go
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
