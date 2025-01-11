@@ -1,23 +1,33 @@
 'use client';
 import { Button, CardActions, Typography, TextField, Box } from '@mui/material';
+import router from 'next/router';
 import { useState } from 'react';
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/signUp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify(form),
     });
     const data = await response.json();
-
     if (response.ok) {
       console.log('User signed up:', data);
+      router.push("/login");
     } else {
       console.error('Signup error:', data.message);
     }
@@ -59,8 +69,8 @@ export default function Login() {
             label="Username"
             placeholder="Enter your username"
             variant="outlined"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={form.username}
+            onChange={handleChange}
             required
             size='small'
             sx={{ marginBottom: 3 }}
@@ -70,21 +80,9 @@ export default function Login() {
             placeholder="Enter a secure password"
             variant="outlined"
             size='small'
-            value={password}
             type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            sx={{ marginBottom: 3 }}
-          />
-          <TextField
-            label="Confirm Password"
-            placeholder="Enter your password again"
-            variant="outlined"
-            value={passwordConfirm}
-            size='small'
-            type="password"
-            fullWidth
-            onChange={(e) => setPasswordConfirm(e.target.value)}
+            value={form.password}
+            onChange={handleChange}
             required
             sx={{ marginBottom: 3 }}
           />

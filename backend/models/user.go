@@ -7,7 +7,7 @@ type User struct {
 }
 
 type CreateUserType struct {
-	Name     string `json:"Name" binding:"required"`
-	Email    string `json:"Email" binding:"required"`
-	Password string `json:"Password" binding:"required"`
+	Username string `json:"username" binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }

@@ -1,6 +1,7 @@
 package user
 
 import (
+	"encoding/json"
 	"fmt"
 	"go_backend/database"
 	"go_backend/models"
@@ -8,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func GetUsers(c *gin.Context) {
@@ -47,7 +49,7 @@ func CheckUsername(c *gin.Context) {
 	username := c.Query("username") // Get the username from query parameters
 
 	var exists bool
-	err := db.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE username = $1)", username).Scan(&exists)
+	err := database.Db.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE username = $1)", username).Scan(&exists)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Database error"})
 		return
@@ -59,14 +61,22 @@ func CheckUsername(c *gin.Context) {
 func CreateUser(c *gin.Context) {
 	var user models.CreateUserType
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
-	query := "INSERT INTO users (username, email, password) VALUES ($1, $2, $3);"
-	_, err := database.Db.Exec(query, user.Name, user.Email, user.Password)
+
+	// Hash the password
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error hashing password"})
 		return
 	}
-	c.JSON(200, gin.H{"message": "User created successfully"})
+
+	// Insert models.CreateUserType into DB
+	_, err = database.Db.Exec("INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)", user.Username, user.Email, passwordHash)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating user"})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"message": "Account created successfully"})
 }
