@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -74,8 +75,16 @@ func CreateUser(c *gin.Context) {
 	// Insert models.CreateUserType into DB
 	_, err = database.Db.Exec("INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)", user.Username, user.Email, passwordHash)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating user"})
-		return
+		if pqErr, ok := err.(*pq.Error); ok {
+			switch pqErr.Code {
+			case "23505": // unique_violation
+				if pqErr.Constraint == "unique_username" {
+					c.JSON(http.StatusBadRequest, gin.H{"message": "Username already exists"})
+				}
+				if pqErr.Constraint == "unique_email" {
+					c.JSON(http.StatusBadRequest, gin.H{"message": "Email already exists"})
+				}
+			}
+		}
 	}
-	c.JSON(http.StatusCreated, gin.H{"message": "Account created successfully"})
 }

@@ -2,6 +2,7 @@
 import { Button, CardActions, Typography, TextField, Box } from '@mui/material';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -34,6 +35,7 @@ export default function Login() {
       push("/login");
     } else {
       console.error('Signup error:', data.message);
+      toast.error(data.message);
     }
   };
 
@@ -45,7 +47,7 @@ export default function Login() {
         height: '100vh',
         margin: 0,
       }}
-    >
+    ><div><Toaster position="top-left" /></div>
       {/* Left Side: Login Form */}
       <Box
         sx={{
