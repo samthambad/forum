@@ -15,8 +15,6 @@ export default function Login() {
   const { push } = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("name:", e.target.name)
-    console.log("value:", e.target.value)
     setForm({
       ...form,
       [e.target.name]: e.target.value,
@@ -32,10 +30,8 @@ export default function Login() {
     });
     const data = await response.json();
     if (response.ok) {
-      console.log('User signed up:', data);
       push("/login");
     } else {
-      console.error('Signup error:', data.message);
       toast.error(data.message);
     }
   };
@@ -44,15 +40,18 @@ export default function Login() {
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'row', // Row layout
+        flexDirection: 'row',
         height: '100vh',
+        width: '100vw',
         margin: 0,
+        padding: 0,
       }}
-    ><div><Toaster position="top-left" /></div>
+    >
+      <Toaster position="top-left" />
       {/* Left Side: Login Form */}
       <Box
         sx={{
-          flex: 1, // Take up 50% of the screen width
+          flex: 1,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-start',
@@ -67,7 +66,7 @@ export default function Login() {
             marginBottom: 3,
             display: 'flex',
             alignItems: 'center',
-            gap: 1, // Add spacing between elements
+            gap: 1,
           }}
         >
           Sign up
@@ -76,9 +75,9 @@ export default function Login() {
             component={Link}
             href="/login"
             sx={{
-              color: 'text.secondary', // Faded color for contrast
-              textDecoration: 'none', // Match "Log in" style
-              '&:hover': { color: '#3498db' }, // Darker on hover
+              color: 'text.secondary',
+              textDecoration: 'none',
+              '&:hover': { color: '#3498db' },
             }}
           >
             or log in
@@ -102,7 +101,7 @@ export default function Login() {
             required
             id="username"
             name="username"
-            size='small'
+            size="small"
             sx={{ marginBottom: 3 }}
           />
           <TextField
@@ -115,14 +114,14 @@ export default function Login() {
             name="email"
             type="email"
             id="email"
-            size='small'
+            size="small"
             sx={{ marginBottom: 3 }}
           />
           <TextField
             label="Password"
             placeholder="Enter a secure password"
             variant="outlined"
-            size='small'
+            size="small"
             name="password"
             type="password"
             id="password"
@@ -154,7 +153,9 @@ export default function Login() {
       <Box
         sx={{
           flex: 1,
-          backgroundImage: 'linear-gradient(to right, #ffffff,  #656565 )',
+          width: '100%',
+          height: '100%',
+          backgroundImage: 'linear-gradient(to right, #ffffff, #656565)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
