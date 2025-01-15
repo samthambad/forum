@@ -1,6 +1,7 @@
 'use client';
 import { Button, CardActions, Typography, TextField, Box } from '@mui/material';
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -59,8 +60,29 @@ export default function Login() {
           padding: 3,
         }}
       >
-        <Typography variant="h2" component="h2" sx={{ marginBottom: 3 }}>
-          Sign Up
+        <Typography
+          variant="h2"
+          component="h2"
+          sx={{
+            marginBottom: 3,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1, // Add spacing between elements
+          }}
+        >
+          Sign up
+          <Typography
+            variant="h4"
+            component={Link}
+            href="/login"
+            sx={{
+              color: 'text.secondary', // Faded color for contrast
+              textDecoration: 'none', // Match "Log in" style
+              '&:hover': { color: '#3498db' }, // Darker on hover
+            }}
+          >
+            or log in
+          </Typography>
         </Typography>
         <form
           onSubmit={handleSignUp}
@@ -120,7 +142,6 @@ export default function Login() {
                 fontWeight: 'bold',
                 borderRadius: 1,
                 background: "#656565",
-                width: '100%',
               }}
             >
               Sign Up
