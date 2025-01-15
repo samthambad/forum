@@ -1,7 +1,6 @@
 package user
 
 import (
-	"encoding/json"
 	"fmt"
 	"go_backend/database"
 	"go_backend/models"
@@ -71,7 +70,7 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error hashing password"})
 		return
 	}
-
+	// fmt.Println("passwordHash", passwordHash)
 	// Insert models.CreateUserType into DB
 	_, err = database.Db.Exec("INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)", user.Username, user.Email, passwordHash)
 	if err != nil {

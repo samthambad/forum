@@ -11,6 +11,8 @@ export default function Login() {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("name:",e.target.name)
+    console.log("value:",e.target.value)
     setForm({
       ...form,
       [e.target.name]: e.target.value,
@@ -72,6 +74,21 @@ export default function Login() {
             value={form.username}
             onChange={handleChange}
             required
+            id="username"
+            name="username"
+            size='small'
+            sx={{ marginBottom: 3 }}
+          />
+          <TextField
+            label="Email"
+            placeholder="Enter your email"
+            variant="outlined"
+            value={form.email}
+            onChange={handleChange}
+            required
+            name="email"
+            type="email"
+            id="email"
             size='small'
             sx={{ marginBottom: 3 }}
           />
@@ -80,7 +97,9 @@ export default function Login() {
             placeholder="Enter a secure password"
             variant="outlined"
             size='small'
+            name="password"
             type="password"
+            id="password"
             value={form.password}
             onChange={handleChange}
             required

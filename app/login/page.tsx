@@ -1,5 +1,6 @@
 'use client';
 import { Button, CardActions, Typography, TextField, Box } from '@mui/material';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function Login() {
@@ -29,14 +30,14 @@ export default function Login() {
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'row', // Row layout
+        flexDirection: 'row',
         height: '100vh',
       }}
     >
       {/* Left Side: Login Form */}
       <Box
         sx={{
-          flex: 1, // Take up 50% of the screen width
+          flex: 1,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-start',
@@ -44,8 +45,29 @@ export default function Login() {
           padding: 3,
         }}
       >
-        <Typography variant="h2" component="h2" sx={{ marginBottom: 3 }}>
+        <Typography
+          variant="h2"
+          component="h2"
+          sx={{
+            marginBottom: 3,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1, // Add spacing between elements
+          }}
+        >
           Log in
+          <Typography
+            variant="h4"
+            component={Link}
+            href="/signup"
+            sx={{
+              color: 'text.secondary', // Faded color for contrast
+              textDecoration: 'none', // Match "Log in" style
+              '&:hover': { color: '#3498db' }, // Darker on hover
+            }}
+          >
+            or sign up
+          </Typography>
         </Typography>
         <form
           onSubmit={handleLogin}
@@ -96,10 +118,10 @@ export default function Login() {
       {/* Right Side: Pattern */}
       <Box
         sx={{
-          flex: 1, // Take up 50% of the screen width
-          backgroundImage: 'linear-gradient(to right, #ffffff, #3498db)', // Example gradient
-          backgroundSize: 'cover', // Adjust pattern size
-          backgroundPosition: 'center', // Center the pattern
+          flex: 1,
+          backgroundImage: 'linear-gradient(to right, #ffffff, #3498db)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
         }}
       />
     </Box>

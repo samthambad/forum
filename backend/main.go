@@ -42,5 +42,5 @@ func main() {
 	router.POST("/create", thread.CreateThread)
 	router.POST("/signUp", user.CreateUser)
 	router.POST("/check_username", user.CheckUsername)
-	router.Run(":8080")
+	router.Run(":8081")
 }

@@ -44,5 +44,9 @@ func CreateThread(c *gin.Context) {
 	}
 	createQuery := "INSERT INTO threads (title, content, created_by) VALUES ($1, $2, $3);"
 	_, err := database.Db.Exec(createQuery, thread.Title, thread.Content)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error inserting new thread"})
+		return
+	}
 	//TODO
 }
