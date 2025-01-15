@@ -1,7 +1,7 @@
 'use client';
 import { Button, CardActions, Typography, TextField, Box } from '@mui/material';
-import router from 'next/router';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -10,9 +10,11 @@ export default function Login() {
     password: "",
   });
 
+  const { push } = useRouter();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("name:",e.target.name)
-    console.log("value:",e.target.value)
+    console.log("name:", e.target.name)
+    console.log("value:", e.target.value)
     setForm({
       ...form,
       [e.target.name]: e.target.value,
@@ -29,7 +31,7 @@ export default function Login() {
     const data = await response.json();
     if (response.ok) {
       console.log('User signed up:', data);
-      router.push("/login");
+      push("/login");
     } else {
       console.error('Signup error:', data.message);
     }
