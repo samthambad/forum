@@ -31,8 +31,6 @@ func main() {
 	router.GET("/all_posts", func(c *gin.Context) {
 		thread.GetAllThreads(c)
 	})
-	router.GET("/current_user", user.GetCurrentUser)
-	// find the current user in main.go
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
@@ -41,6 +39,6 @@ func main() {
 	router.GET("/all_users", user.GetUsers)
 	router.POST("/create", thread.CreateThread)
 	router.POST("/signUp", user.CreateUser)
-	router.POST("/check_username", user.CheckUsername)
+	router.POST("/login", user.Login)
 	router.Run(":8081")
 }

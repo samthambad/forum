@@ -12,6 +12,6 @@ type CreateUserType struct {
 	Password string `json:"password" binding:"required"`
 }
 type LoginUserType struct {
-	Username string `json:"email"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 }

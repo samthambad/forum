@@ -104,19 +104,19 @@ func Login(c *gin.Context) {
 		PasswordHash string
 	}
 
+	fmt.Println("user", creds)
 	// Fetch user details from DB
 	err := database.Db.QueryRow("SELECT id, password_hash FROM users WHERE username = $1", creds.Username).Scan(&user.ID, &user.PasswordHash)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
-
 	// Compare password hashes using cost and salt
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(creds.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
-
+	fmt.Println("user.ID", user.ID)
 	// Generate JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": user.ID,

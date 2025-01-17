@@ -1,27 +1,31 @@
 'use client';
 import { Button, CardActions, Typography, TextField, Box } from '@mui/material';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const { push } = useRouter();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ "username": username, "password": password }),
     });
 
     const data = await response.json();
-
     if (response.ok) {
       localStorage.setItem('token', data.token); // Save token
       console.log('User logged in');
+      push("/home");
     } else {
+      toast.error("Wrong username or password");
       console.error('Login error:', data.message);
     }
   };
@@ -34,6 +38,7 @@ export default function Login() {
         height: '100vh',
       }}
     >
+      <Toaster position="top-left" />
       {/* Left Side: Login Form */}
       <Box
         sx={{
