@@ -3,7 +3,7 @@ import { Box, Divider, List, ListItem, ListItemButton, ListItemText, ListSubhead
 import { useEffect, useState } from "react";
 export default function Home() {
   const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
-  const [threads, setPosts] = useState<Thread[]>([]);
+  const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function Home() {
         }
         const data = await response.json();
         console.log("json data", data)
-        setPosts(data);
+        setThreads(data);
       } catch (err) {
         console.log("error fetching")
       } finally {
@@ -33,7 +33,7 @@ export default function Home() {
     CreatedAt: Date;
   }
   if (loading) return <p>Loading...</p>;
-  console.log("number of posts:", threads.length)
+  console.log("number of posts:", threads?.length)
   return (
     <Box sx={{ height: "100vh", display: "flex" }}>
       <Box
@@ -49,14 +49,14 @@ export default function Home() {
         <Typography variant="h6" sx={{ p: 2, borderBottom: "1px solid #ddd" }}>
           Threads
         </Typography>
-        {threads.length == 0 ? "No Posts available" :
+        {threads?.length == 0 ? "No Posts available" :
           <div>
             <List
               sx={{ width: '100%', }}
               component="nav"
               aria-labelledby="nested-list-subheader"
             >
-              {threads.map((thread: Thread) => (
+              {threads?.map((thread: Thread) => (
                 <ListItem
                   key={thread.ID} onClick={() => setSelectedThread(thread)}
                   sx={{
