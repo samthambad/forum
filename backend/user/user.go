@@ -6,8 +6,11 @@ import (
 	"go_backend/models"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -87,4 +90,46 @@ func CreateUser(c *gin.Context) {
 			}
 		}
 	}
+}
+func Login(c *gin.Context) {
+	var creds models.LoginUserType
+	// Bind JSON data to creds struct
+	if err := c.ShouldBindJSON(&creds); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	var user struct {
+		ID           int
+		PasswordHash string
+	}
+
+	// Fetch user details from DB
+	err := database.Db.QueryRow("SELECT id, password_hash FROM users WHERE username = $1", creds.Username).Scan(&user.ID, &user.PasswordHash)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		return
+	}
+
+	// Compare password hashes using cost and salt
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(creds.Password)); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		return
+	}
+
+	// Generate JWT token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": user.ID,
+		"exp":     time.Now().Add(12 * time.Hour).Unix(), // expire in 12 hours
+	})
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
+		return
+	}
+
+	// Set token as an HttpOnly cookie
+	c.SetCookie("auth_token", tokenString, 12*3600, "/", "", false, true) // cookie expires in 12 hours
+
+	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 }
