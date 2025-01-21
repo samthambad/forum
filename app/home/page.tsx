@@ -49,29 +49,29 @@ export default function Home() {
         <Typography variant="h6" sx={{ p: 2, borderBottom: "1px solid #ddd" }}>
           Threads
         </Typography>
-        {threads?.length == 0 ? "No Posts available" :
-          <div>
-            <List
-              sx={{ width: '100%', }}
-              component="nav"
-              aria-labelledby="nested-list-subheader"
-            >
-              {threads?.map((thread: Thread) => (
-                <ListItem
-                  key={thread.ID} onClick={() => setSelectedThread(thread)}
-                  sx={{
-                    "&:hover": { backgroundColor: "#f0f0f0" },
-                    backgroundColor:
-                      selectedThread?.ID === thread.ID ? "#e0e0e0" : "inherit",
-                  }}
-                >
-                  <ListItemText
-                    primary={thread.Title}
-                    secondary={`${thread.Content.slice(0, 25)}... ${new Date(thread.CreatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
-                  />
-                </ListItem>))}
-            </List>
-          </div>}
+        {threads === null || threads.length === 0 ? <Typography sx={{ m: "6" }}>No Posts available</Typography> : null}
+        <div>
+          <List
+            sx={{ width: '100%', }}
+            component="nav"
+            aria-labelledby="nested-list-subheader"
+          >
+            {threads?.map((thread: Thread) => (
+              <ListItem
+                key={thread.ID} onClick={() => setSelectedThread(thread)}
+                sx={{
+                  "&:hover": { backgroundColor: "#f0f0f0" },
+                  backgroundColor:
+                    selectedThread?.ID === thread.ID ? "#e0e0e0" : "inherit",
+                }}
+              >
+                <ListItemText
+                  primary={thread.Title}
+                  secondary={`${thread.Content.slice(0, 25)}... ${new Date(thread.CreatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                />
+              </ListItem>))}
+          </List>
+        </div>
       </Box>
       <Box
         sx={{
