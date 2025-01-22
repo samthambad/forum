@@ -132,3 +132,9 @@ func Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 }
+
+func Logout(c *gin.Context) {
+	// Clear the JWT token by setting the cookie with an expired date
+	c.SetCookie("auth_token", "", -1, "/", "", false, true)
+	c.JSON(http.StatusOK, gin.H{"message": "Logged out"})
+}

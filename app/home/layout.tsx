@@ -118,9 +118,13 @@ export default function MiniDrawer({ children }: { children: React.ReactNode }) 
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Clear the JWT token from cookies
-    document.cookie = 'auth_token=; Max-Age=0; path=/; domain=localhost';
+    const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/logout')
+    if (!response.ok) {
+      throw new Error("Failed to log out");
+    }
+    document.cookie = 'auth_token=; Max-Age=0; path=/; SameSite=None';
     localStorage.removeItem('auth_token');
     window.location.href = '/login';
   };
