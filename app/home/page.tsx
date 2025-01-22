@@ -1,11 +1,10 @@
 'use client'
-import { Box, Divider, List, ListItem, ListItemButton, ListItemText, ListSubheader, Typography } from "@mui/material";
+import { Box, Divider, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 export default function Home() {
   const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -17,7 +16,7 @@ export default function Home() {
         console.log("json data", data)
         setThreads(data);
       } catch (err) {
-        console.log("error fetching")
+        console.log("error fetching", err)
       } finally {
         setLoading(false);
       }

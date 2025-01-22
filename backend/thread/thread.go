@@ -42,11 +42,11 @@ func CreateThread(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
+	// TODO get the user id
 	createQuery := "INSERT INTO threads (title, content, created_by) VALUES ($1, $2, $3);"
 	_, err := database.Db.Exec(createQuery, thread.Title, thread.Content)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error inserting new thread"})
 		return
 	}
-	//TODO
 }

@@ -20,7 +20,6 @@ const CreateThreadPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO
         try {
             const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/create", {
                 method: "POST",

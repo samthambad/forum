@@ -104,7 +104,6 @@ func Login(c *gin.Context) {
 		PasswordHash string
 	}
 
-	fmt.Println("user", creds)
 	// Fetch user details from DB
 	err := database.Db.QueryRow("SELECT id, password_hash FROM users WHERE username = $1", creds.Username).Scan(&user.ID, &user.PasswordHash)
 	if err != nil {
@@ -122,7 +121,7 @@ func Login(c *gin.Context) {
 		"user_id": user.ID,
 		"exp":     time.Now().Add(12 * time.Hour).Unix(), // expire in 12 hours
 	})
-	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	tokenString, err := token.SignedString([]byte(os.Getenv("NEXT_PUBLIC_JWT_SECRET")))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
 		return

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"go_backend/middleware"
 	"go_backend/thread"
 	"go_backend/user"
 
@@ -36,9 +37,9 @@ func main() {
 			"message": "pong",
 		})
 	})
-	router.GET("/all_users", user.GetUsers)
-	router.POST("/create", thread.CreateThread)
-	router.POST("/signUp", user.CreateUser)
-	router.POST("/login", user.Login)
+	router.GET("/api/all_users", user.GetUsers)
+	router.POST("/api/create", middleware.AuthMiddleware(), thread.CreateThread)
+	router.POST("/api/signUp", user.CreateUser)
+	router.POST("/api/login", user.Login)
 	router.Run(":8081")
 }

@@ -13,9 +13,10 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/login', {
+    const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: "include",
       body: JSON.stringify({ "username": username, "password": password }),
     });
 
