@@ -14,6 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
+import LogoutIcon from '@mui/icons-material/Logout';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -23,7 +24,6 @@ import InboxIcon from '@mui/icons-material/Inbox';
 import Link from 'next/link';
 
 const drawerWidth = 240;
-
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
   transition: theme.transitions.create('width', {
@@ -118,10 +118,18 @@ export default function MiniDrawer({ children }: { children: React.ReactNode }) 
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  const handleLogout = () => {
+    // Clear the JWT token from cookies
+    document.cookie = 'auth_token=; Max-Age=0; path=/; domain=localhost';
+    localStorage.removeItem('auth_token');
+    window.location.href = '/login';
+  };
+
   const links = [
     { text: 'Feed', href: '/home', icon: <InboxIcon /> },
     { text: 'Create', href: '/create', icon: <CreateIcon /> },
     { text: 'Your Profile', href: '/profile', icon: <AssignmentIndIcon /> },
+    { text: 'Sign Out', href: '#', icon: <LogoutIcon />, action: () => handleLogout() },
   ];
 
   return (
@@ -172,10 +180,11 @@ export default function MiniDrawer({ children }: { children: React.ReactNode }) 
               >
                 ACTIONS
               </ListItem>
-              {links.map(({ text, href, icon }) => (
+              {links.map(({ text, href, icon, action }) => (
                 <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                   <Link href={href} passHref style={{ textDecoration: 'none' }}>
                     <ListItemButton
+                      onClick={action ? action : undefined}
                       sx={[
                         {
                           minHeight: 48,
@@ -229,7 +238,6 @@ export default function MiniDrawer({ children }: { children: React.ReactNode }) 
                 </ListItem>
               ))}
             </List>
-            <Divider />
           </Drawer>
           <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
             <DrawerHeader />
