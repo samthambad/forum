@@ -7,6 +7,7 @@ import (
 	"go_backend/models"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -138,4 +139,75 @@ func CreateThread(c *gin.Context) {
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Thread created successfully"})
+}
+
+func CreateComment(c *gin.Context) {
+	threadID := c.Param("thread_id")
+	userID, _ := c.Get("user_id") // From AuthMiddleware
+
+	var comment models.Comment
+	if err := c.ShouldBindJSON(&comment); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid comment data"})
+		return
+	}
+
+	// Convert threadID to int
+	threadIDInt, err := strconv.Atoi(threadID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid thread ID"})
+		return
+	}
+
+	// Insert comment
+	err = database.Db.QueryRow(
+		`INSERT INTO comments (content, user_id, thread_id)
+         VALUES ($1, $2, $3) RETURNING id, created_at`,
+		comment.Content, userID, threadIDInt,
+	).Scan(&comment.ID, &comment.CreatedAt)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create comment"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, comment)
+}
+
+func GetComments(c *gin.Context) {
+	threadID := c.Param("thread_id")
+
+	// joining the users and comments to get the username
+	query := `
+        SELECT c.id, c.content, c.user_id, c.created_at, u.username
+        FROM comments c
+        JOIN users u ON c.user_id = u.id
+        WHERE c.thread_id = $1
+        ORDER BY c.created_at DESC
+    `
+
+	rows, err := database.Db.Query(query, threadID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch comments"})
+		return
+	}
+	defer rows.Close()
+
+	var comments []models.CommentWithUser
+	for rows.Next() {
+		var comment models.CommentWithUser
+		err := rows.Scan(
+			&comment.ID,
+			&comment.Content,
+			&comment.UserID,
+			&comment.CreatedAt,
+			&comment.Username,
+		)
+		if err != nil {
+			log.Printf("Error scanning comment: %v", err)
+			continue
+		}
+		comments = append(comments, comment)
+	}
+
+	c.JSON(http.StatusOK, comments)
 }

@@ -83,7 +83,7 @@ export default function Home() {
               <ListItem
                 key={thread.Id} onClick={() => setSelectedThread(thread)}
                 sx={{
-                  "&:hover": { backgroundColor: "#f0f0f0" },
+                  "&:hover": { backgroundColor: "#e0e0e0" },
                   backgroundColor:
                     selectedThread?.Id === thread.Id ? "#e0e0e0" : "inherit",
                 }}
