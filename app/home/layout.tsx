@@ -120,13 +120,27 @@ export default function MiniDrawer({ children }: { children: React.ReactNode }) 
   };
   const handleLogout = async () => {
     // Clear the JWT token from cookies
-    const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/logout')
-    if (!response.ok) {
-      throw new Error("Failed to log out");
+    try {
+      // Call backend logout endpoint WITH credentials (to send cookies)
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_BACKEND_URL + '/api/logout',
+        {
+          method: "GET",
+          credentials: "include", // Required for cookies to be sent/received
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to log out");
+
+      // Clear client-side storage (localStorage)
+      localStorage.removeItem('auth_token');
+
+      // Force a hard redirect to reset the app state
+      window.location.href = '/login';
+    } catch (error) {
+      console.error("Logout error:", error);
     }
-    document.cookie = 'auth_token=; Max-Age=0; path=/; SameSite=None';
-    localStorage.removeItem('auth_token');
-    window.location.href = '/login';
+    // document.cookie = 'auth_token=; Max-Age=0; path=/; SameSite=None';
   };
 
   const links = [
