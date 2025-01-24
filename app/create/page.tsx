@@ -20,7 +20,7 @@ import TagIcon from '@mui/icons-material/Tag';
 import { useRouter } from "next/navigation";
 
 interface Tags {
-    Id: number,
+    ID: number,
     Name: string
 }
 const CreateThreadPage = () => {
@@ -81,7 +81,19 @@ const CreateThreadPage = () => {
         setTitle("");
         setContent("");
     };
-
+    const chooseTag = (id: number) => {
+        setChosenTags(prevChosenTags => {
+            if (prevChosenTags.some(tag => tag.ID === id)) {
+                return prevChosenTags.filter(tag => tag.ID !== id);
+            } else {
+                const tagToAdd = tags.find(tag => tag.ID === id);
+                if (tagToAdd) {
+                    return [...prevChosenTags, tagToAdd];
+                }
+                return prevChosenTags;
+            }
+        });
+    };
     return (
         <Box
             sx={{
@@ -142,14 +154,36 @@ const CreateThreadPage = () => {
                                         sx={{ marginBottom: 3 }}
                                     />
                                     <Typography fontWeight="light" mb={2}>Tags</Typography>
-                                    <List>
-                                        {tags.map((eachTag, index) => (
-                                            <ListItemButton key={index} sx={{ borderRadius: 10 }}>
+                                    <Box sx={{
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        gap: 1,
+                                        backgroundColor: "rgba(0, 0, 0, 0.1)",
+                                    }}>
+                                        {tags.map((eachTag) => (
+                                            <ListItemButton key={eachTag.ID} sx={{
+                                                minWidth: "auto",
+                                                padding: "4px 8px",
+                                                borderRadius: 2,
+                                                textTransform: "none",
+                                                fontSize: "0.75rem",
+                                                backgroundColor: chosenTags.some(tag => tag.ID === eachTag.ID)
+                                                    ? "primary.light"
+                                                    : "transparent",
+                                                color: chosenTags.some(tag => tag.ID === eachTag.ID)
+                                                    ? "white"
+                                                    : "text.primary",
+                                                "&:hover": {
+                                                    backgroundColor: chosenTags.some(tag => tag.ID === eachTag.ID)
+                                                        ? "primary.dark"
+                                                        : "action.hover",
+                                                },
+                                            }} onClick={() => chooseTag(eachTag.ID)}>
                                                 <TagIcon sx={{ marginRight: 1 }} />
                                                 {eachTag.Name}
                                             </ListItemButton>
                                         ))}
-                                    </List>
+                                    </Box>
                                     <CardActions>
                                         <Button
                                             type="submit"
