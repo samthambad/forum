@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from "react";
+import { Tag } from "../models/models"
 import {
     TextField,
     Button,
@@ -11,36 +12,23 @@ import {
     Grid,
     Container,
     Divider,
-    List,
-    ListItem,
     ListItemButton,
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 import TagIcon from '@mui/icons-material/Tag';
 import { useRouter } from "next/navigation";
 
-interface Tags {
-    ID: number,
-    Name: string
-}
 const CreateThreadPage = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [tags, setTags] = useState<Tags[]>([])
-    const [chosenTags, setChosenTags] = useState<Tags[]>([])
+    const [tags, setTags] = useState<Tag[]>([])
+    const [chosenTags, setChosenTags] = useState<Tag[]>([])
     const { push } = useRouter();
 
     useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                fetchTags();
-            } catch (err) {
-                console.log("error fetching tags", err)
-            }
-        };
-
-        fetchPosts();
+        fetchTags();
     }, []);
+
     const fetchTags = async () => {
         const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/api/getTags", {
             method: "GET",
@@ -62,7 +50,8 @@ const CreateThreadPage = () => {
                 },
                 body: JSON.stringify({
                     "Title": title,
-                    "Content": content
+                    "Content": content,
+                    "ChosenTags": chosenTags
                 }),
                 credentials: "include"
             });
@@ -71,6 +60,7 @@ const CreateThreadPage = () => {
                 console.log("Thread created successfully:", result);
                 setTitle("");
                 setContent("");
+                setChosenTags([])
                 push("/home")
             } else {
                 console.error("Failed to create thread.");

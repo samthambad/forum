@@ -1,27 +1,44 @@
 'use client'
-import { Box, Divider, List, ListItem, ListItemText, Typography } from "@mui/material";
+import { Box, Divider, List, ListItem, ListItemButton, ListItemText, Typography } from "@mui/material";
+import TagIcon from '@mui/icons-material/Tag';
 import { useEffect, useState } from "react";
+import { Tag } from "../models/models";
 export default function Home() {
   const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/all_posts",
+        const response = await fetch(
+          process.env.NEXT_PUBLIC_BACKEND_URL + "/api/all_posts",
           {
             method: "GET",
             credentials: "include"
           }
         );
+
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
         }
+
         const data = await response.json();
-        console.log("json data", data)
-        setThreads(data);
+        console.log("API response data:", data);
+
+        // Map the response data to match the Thread interface
+        const formattedThreads = data.map((item: any) => ({
+          Id: item.id,
+          Title: item.title,
+          Content: item.content,
+          CreatedBy: item.created_by,
+          CreatedAt: new Date(item.created_at),
+          Tags: item.tags || [] // Handle null case
+        }));
+
+        setThreads(formattedThreads);
       } catch (err) {
-        console.log("error fetching", err)
+        console.error("Error fetching posts:", err);
       } finally {
         setLoading(false);
       }
@@ -29,12 +46,15 @@ export default function Home() {
 
     fetchPosts();
   }, []);
+
+  // Interface definitions
   interface Thread {
-    ID: number;
+    Id: number;
     Title: string;
     Content: string;
     CreatedBy: number;
     CreatedAt: Date;
+    Tags: Tag[];
   }
   if (loading) return <p>Loading...</p>;
   console.log("number of posts:", threads?.length)
@@ -93,9 +113,29 @@ export default function Home() {
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Typography>
-
               {selectedThread.Content}
             </Typography>
+            <Box sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 1,
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+            }}>
+              {selectedThread.Tags?.map((eachTag) => (
+                <ListItemButton key={eachTag.ID} sx={{
+                  minWidth: "auto",
+                  padding: "4px 8px",
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontSize: "0.75rem",
+                  backgroundColor: "primary.light",
+                  color: "white"
+                }}>
+                  <TagIcon sx={{ marginRight: 1 }} />
+                  {eachTag.name}
+                </ListItemButton>
+              ))}
+            </Box>
           </>
         ) : (
           <Typography variant="h6" sx={{ textAlign: "center", mt: 4, color: "gray" }}>
