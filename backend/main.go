@@ -45,5 +45,6 @@ func main() {
 	router.POST("/api/signUp", user.CreateUser)
 	router.POST("/api/login", user.Login)
 	router.POST("/api/make_comment", middleware.AuthMiddleware(), thread.CreateComment)
+	router.POST("/api/thread_comments", middleware.AuthMiddleware(), thread.GetComments)
 	router.Run(":8081")
 }

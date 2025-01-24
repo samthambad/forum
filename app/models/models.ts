@@ -4,10 +4,18 @@ export interface Tag {
 }
 
 export interface ThreadDisplay {
-    Id: number,
-    Title: string,
-    Content: string,
-    CreatedBy: number,
-    CreatedAt: Date,
-    Tags: Tag[]
+    id: number,
+    title: string,
+    content: string,
+    createdBy: number,
+    createdAt: Date,
+    tags: Tag[]
+}
+export interface Comment {
+    id: number;
+    content: string;
+    userId: number;
+    threadId: number;
+    createdAt: string;
+    username?: string; // For display
 }

@@ -3,10 +3,13 @@ import { Box, Chip, Divider, List, ListItem, ListItemText, Typography } from "@m
 import TagIcon from '@mui/icons-material/Tag';
 import { useEffect, useState } from "react";
 import { Tag, ThreadDisplay } from "../models/models";
+import CommentForm from "../components/CommentForm";
+import CommentList from "../components/CommentList";
 export default function Home() {
-  const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
-  const [threads, setThreads] = useState<Thread[]>([]);
+  const [selectedThread, setSelectedThread] = useState<ThreadDisplay | null>(null);
+  const [threads, setThreads] = useState<ThreadDisplay[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshComments, setRefreshComments] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -28,15 +31,15 @@ export default function Home() {
 
         // Map the response data to match the Thread interface
         const formattedThreads: ThreadDisplay[] = data.map((item: { id: number; title: string; content: string; created_by: number; created_at: string; tags: Tag[] }) => ({
-          Id: item.id,
-          Title: item.title,
-          Content: item.content,
-          CreatedBy: item.created_by,
-          CreatedAt: new Date(item.created_at),
-          Tags: item.tags || [] // null case
+          id: item.id,
+          title: item.title,
+          content: item.content,
+          createdBy: item.created_by,
+          createdAt: new Date(item.created_at),
+          tags: item.tags || [] // null case
         }));
 
-        setThreads(formattedThreads.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime()));
+        setThreads(formattedThreads.sort((a, b) => b.createdAt?.getTime() - a.createdAt?.getTime()));
       } catch (err) {
         console.error("Error fetching posts:", err);
       } finally {
@@ -47,16 +50,10 @@ export default function Home() {
     fetchPosts();
   }, []);
 
-  interface Thread {
-    Id: number;
-    Title: string;
-    Content: string;
-    CreatedBy: number;
-    CreatedAt: Date;
-    Tags: Tag[];
-  }
 
   if (loading) return <p>Loading...</p>;
+
+  console.log(threads)
   return (
     <Box sx={{ height: "100vh", display: "flex" }}>
       <Box
@@ -79,18 +76,18 @@ export default function Home() {
             component="nav"
             aria-labelledby="nested-list-subheader"
           >
-            {threads?.map((thread: Thread) => (
+            {threads?.map((thread: ThreadDisplay) => (
               <ListItem
-                key={thread.Id} onClick={() => setSelectedThread(thread)}
+                key={thread.id} onClick={() => setSelectedThread(thread)}
                 sx={{
                   "&:hover": { backgroundColor: "#e0e0e0" },
                   backgroundColor:
-                    selectedThread?.Id === thread.Id ? "#e0e0e0" : "inherit",
+                    selectedThread?.id === thread.id ? "#e0e0e0" : "inherit",
                 }}
               >
                 <ListItemText
-                  primary={thread.Title}
-                  secondary={`${thread.Content.length > 25 ? thread.Content.slice(0, 25) + "..." : thread.Content} ${new Date(thread.CreatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                  primary={thread.title}
+                  secondary={`${thread.content.length > 25 ? thread.content.slice(0, 25) + "..." : thread.content} ${new Date(thread.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                 />
               </ListItem>))}
           </List>
@@ -108,14 +105,14 @@ export default function Home() {
         {selectedThread ? (
           <>
             <Typography variant="h5" gutterBottom>
-              {selectedThread.Title}
+              {selectedThread.title}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Typography>
-              {selectedThread.Content}
+              {selectedThread.content}
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-              {selectedThread.Tags?.map((eachTag) => (
+              {selectedThread.tags?.map((eachTag) => (
                 <Chip
                   key={eachTag.id}
                   size="small"
@@ -140,6 +137,15 @@ export default function Home() {
                 />
               ))}
             </Box>
+            <CommentForm
+              threadId={selectedThread.id}
+              onCommentAdded={() => setRefreshComments(!refreshComments)}
+            />
+
+            <CommentList
+              threadId={selectedThread.id}
+              key={refreshComments ? 'refresh' : 'static'}
+            />
           </>
         ) : (
           <Typography variant="h6" sx={{ textAlign: "center", mt: 4, color: "gray" }}>

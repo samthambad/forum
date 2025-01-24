@@ -7,7 +7,6 @@ import (
 	"go_backend/models"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -142,40 +141,45 @@ func CreateThread(c *gin.Context) {
 }
 
 func CreateComment(c *gin.Context) {
-	threadID := c.Param("thread_id")
-	userID, _ := c.Get("user_id") // From AuthMiddleware
-
-	var comment models.Comment
-	if err := c.ShouldBindJSON(&comment); err != nil {
+	var commentSent models.Comment
+	if err := c.ShouldBindJSON(&commentSent); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid comment data"})
 		return
 	}
 
-	// Convert threadID to int
-	threadIDInt, err := strconv.Atoi(threadID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid thread ID"})
+	threadId := commentSent.ThreadID
+	fmt.Println("threadId", threadId)
+	userId, exists := c.Get("user_id")
+	if !exists {
+		fmt.Println("Error getting user_id from context")
 		return
 	}
-
 	// Insert comment
-	err = database.Db.QueryRow(
+	err := database.Db.QueryRow(
 		`INSERT INTO comments (content, user_id, thread_id)
          VALUES ($1, $2, $3) RETURNING id, created_at`,
-		comment.Content, userID, threadIDInt,
-	).Scan(&comment.ID, &comment.CreatedAt)
+		commentSent.Content, userId, threadId,
+	).Scan(&commentSent.ID, &commentSent.CreatedAt)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create comment"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, comment)
+	c.JSON(http.StatusCreated, commentSent)
 }
 
 func GetComments(c *gin.Context) {
-	threadID := c.Param("thread_id")
 
+	type CommentRequestType struct {
+		ThreadId int `json:"thread_id" binding:"required"`
+	}
+	var commentRequest CommentRequestType
+	if err := c.ShouldBindJSON(&commentRequest); err != nil {
+		fmt.Println(commentRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
 	// joining the users and comments to get the username
 	query := `
         SELECT c.id, c.content, c.user_id, c.created_at, u.username
@@ -185,7 +189,7 @@ func GetComments(c *gin.Context) {
         ORDER BY c.created_at DESC
     `
 
-	rows, err := database.Db.Query(query, threadID)
+	rows, err := database.Db.Query(query, commentRequest.ThreadId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch comments"})
 		return
@@ -194,6 +198,7 @@ func GetComments(c *gin.Context) {
 
 	var comments []models.CommentWithUser
 	for rows.Next() {
+		fmt.Println("iterating...")
 		var comment models.CommentWithUser
 		err := rows.Scan(
 			&comment.ID,
@@ -208,6 +213,6 @@ func GetComments(c *gin.Context) {
 		}
 		comments = append(comments, comment)
 	}
-
+	fmt.Println("comment(s):", comments)
 	c.JSON(http.StatusOK, comments)
 }
