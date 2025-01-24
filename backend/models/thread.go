@@ -16,3 +16,8 @@ type CreateThreadType struct {
 	Title   string `json:"Title" binding:"required"`
 	Content string `json:"Content" binding:"required"`
 }
+
+type Tag struct {
+	ID   int
+	Name string
+}

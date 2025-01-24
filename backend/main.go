@@ -38,9 +38,11 @@ func main() {
 		})
 	})
 	router.GET("/api/all_users", user.GetUsers)
+	router.GET("/api/getTags", middleware.AuthMiddleware(), thread.GetAllTags)
+	router.GET("/api/logout", user.Logout)
+
 	router.POST("/api/create", middleware.AuthMiddleware(), thread.CreateThread)
 	router.POST("/api/signUp", user.CreateUser)
 	router.POST("/api/login", user.Login)
-	router.GET("/api/logout", user.Logout)
 	router.Run(":8081")
 }

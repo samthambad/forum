@@ -71,7 +71,7 @@ export default function Home() {
               >
                 <ListItemText
                   primary={thread.Title}
-                  secondary={`${thread.Content.slice(0, 25)}... ${new Date(thread.CreatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                  secondary={`${thread.Content.length > 25 ? thread.Content.slice(0, 25) + "..." : thread.Content} ${new Date(thread.CreatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                 />
               </ListItem>))}
           </List>

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     TextField,
     Button,
@@ -11,14 +11,47 @@ import {
     Grid,
     Container,
     Divider,
+    List,
+    ListItem,
+    ListItemButton,
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
+import TagIcon from '@mui/icons-material/Tag';
 import { useRouter } from "next/navigation";
 
+interface Tags {
+    Id: number,
+    Name: string
+}
 const CreateThreadPage = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const [tags, setTags] = useState<Tags[]>([])
+    const [chosenTags, setChosenTags] = useState<Tags[]>([])
     const { push } = useRouter();
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                fetchTags();
+            } catch (err) {
+                console.log("error fetching tags", err)
+            }
+        };
+
+        fetchPosts();
+    }, []);
+    const fetchTags = async () => {
+        const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/api/getTags", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include"
+        })
+        const dataJson = await response.json()
+        setTags(dataJson)
+    }
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -108,6 +141,15 @@ const CreateThreadPage = () => {
                                         rows={10}
                                         sx={{ marginBottom: 3 }}
                                     />
+                                    <Typography fontWeight="light" mb={2}>Tags</Typography>
+                                    <List>
+                                        {tags.map((eachTag, index) => (
+                                            <ListItemButton key={index} sx={{ borderRadius: 10 }}>
+                                                <TagIcon sx={{ marginRight: 1 }} />
+                                                {eachTag.Name}
+                                            </ListItemButton>
+                                        ))}
+                                    </List>
                                     <CardActions>
                                         <Button
                                             type="submit"
@@ -184,7 +226,7 @@ const CreateThreadPage = () => {
                     </Grid>
                 </Grid>
             </Container>
-        </Box>
+        </Box >
     );
 };
 

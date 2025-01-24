@@ -34,6 +34,26 @@ func GetAllThreads(c *gin.Context) {
 	c.JSON(http.StatusOK, threads)
 }
 
+func GetAllTags(c *gin.Context) {
+	query := "SELECT * FROM tags;"
+	rows, err := database.Db.Query(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database query error"})
+		return
+	}
+	var tags []models.Tag
+	defer rows.Close()
+	for rows.Next() {
+		var tag models.Tag
+		if err := rows.Scan(&tag.ID, &tag.Name); err != nil {
+			log.Println("Error scanning row:", err)
+			continue
+		}
+		tags = append(tags, tag)
+	}
+	c.JSON(http.StatusOK, tags)
+}
+
 func CreateThread(c *gin.Context) {
 	var thread models.CreateThreadType
 	// convert to the struct value
