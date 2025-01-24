@@ -1,8 +1,8 @@
 'use client'
-import { Box, Divider, List, ListItem, ListItemButton, ListItemText, Typography } from "@mui/material";
+import { Box, Chip, Divider, List, ListItem, ListItemText, Typography } from "@mui/material";
 import TagIcon from '@mui/icons-material/Tag';
 import { useEffect, useState } from "react";
-import { Tag } from "../models/models";
+import { Tag, ThreadDisplay } from "../models/models";
 export default function Home() {
   const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -27,16 +27,16 @@ export default function Home() {
         console.log("API response data:", data);
 
         // Map the response data to match the Thread interface
-        const formattedThreads = data.map((item: any) => ({
+        const formattedThreads: ThreadDisplay[] = data.map((item: { id: number; title: string; content: string; created_by: number; created_at: string; tags: Tag[] }) => ({
           Id: item.id,
           Title: item.title,
           Content: item.content,
           CreatedBy: item.created_by,
           CreatedAt: new Date(item.created_at),
-          Tags: item.tags || [] // Handle null case
+          Tags: item.tags || [] // null case
         }));
 
-        setThreads(formattedThreads);
+        setThreads(formattedThreads.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime()));
       } catch (err) {
         console.error("Error fetching posts:", err);
       } finally {
@@ -47,7 +47,6 @@ export default function Home() {
     fetchPosts();
   }, []);
 
-  // Interface definitions
   interface Thread {
     Id: number;
     Title: string;
@@ -56,8 +55,8 @@ export default function Home() {
     CreatedAt: Date;
     Tags: Tag[];
   }
+
   if (loading) return <p>Loading...</p>;
-  console.log("number of posts:", threads?.length)
   return (
     <Box sx={{ height: "100vh", display: "flex" }}>
       <Box
@@ -82,11 +81,11 @@ export default function Home() {
           >
             {threads?.map((thread: Thread) => (
               <ListItem
-                key={thread.ID} onClick={() => setSelectedThread(thread)}
+                key={thread.Id} onClick={() => setSelectedThread(thread)}
                 sx={{
                   "&:hover": { backgroundColor: "#f0f0f0" },
                   backgroundColor:
-                    selectedThread?.ID === thread.ID ? "#e0e0e0" : "inherit",
+                    selectedThread?.Id === thread.Id ? "#e0e0e0" : "inherit",
                 }}
               >
                 <ListItemText
@@ -115,25 +114,30 @@ export default function Home() {
             <Typography>
               {selectedThread.Content}
             </Typography>
-            <Box sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 1,
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
-            }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
               {selectedThread.Tags?.map((eachTag) => (
-                <ListItemButton key={eachTag.ID} sx={{
-                  minWidth: "auto",
-                  padding: "4px 8px",
-                  borderRadius: 2,
-                  textTransform: "none",
-                  fontSize: "0.75rem",
-                  backgroundColor: "primary.light",
-                  color: "white"
-                }}>
-                  <TagIcon sx={{ marginRight: 1 }} />
-                  {eachTag.name}
-                </ListItemButton>
+                <Chip
+                  key={eachTag.id}
+                  size="small"
+                  label={eachTag.name}
+                  icon={<TagIcon sx={{ fontSize: '10px !important', ml: '4px' }} />}
+                  sx={{
+                    height: '20px',
+                    fontSize: '0.6rem',
+                    borderRadius: '4px',
+                    padding: '0 4px',
+                    '& .MuiChip-icon': {
+                      margin: '0 !important',
+                      marginRight: '4px !important'
+                    },
+                    '& .MuiChip-label': {
+                      padding: '0 4px',
+                      maxWidth: '80px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }
+                  }}
+                />
               ))}
             </Box>
           </>

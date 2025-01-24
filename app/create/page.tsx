@@ -73,10 +73,10 @@ const CreateThreadPage = () => {
     };
     const chooseTag = (id: number) => {
         setChosenTags(prevChosenTags => {
-            if (prevChosenTags.some(tag => tag.ID === id)) {
-                return prevChosenTags.filter(tag => tag.ID !== id);
+            if (prevChosenTags.some(tag => tag.id === id)) {
+                return prevChosenTags.filter(tag => tag.id !== id);
             } else {
-                const tagToAdd = tags.find(tag => tag.ID === id);
+                const tagToAdd = tags.find(tag => tag.id === id);
                 if (tagToAdd) {
                     return [...prevChosenTags, tagToAdd];
                 }
@@ -147,30 +147,47 @@ const CreateThreadPage = () => {
                                     <Box sx={{
                                         display: "flex",
                                         flexWrap: "wrap",
-                                        gap: 1,
-                                        backgroundColor: "rgba(0, 0, 0, 0.1)",
+                                        gap: "4px",
+                                        alignItems: "flex-start"
                                     }}>
                                         {tags.map((eachTag) => (
-                                            <ListItemButton key={eachTag.ID} sx={{
-                                                minWidth: "auto",
-                                                padding: "4px 8px",
-                                                borderRadius: 2,
-                                                textTransform: "none",
-                                                fontSize: "0.75rem",
-                                                backgroundColor: chosenTags.some(tag => tag.ID === eachTag.ID)
-                                                    ? "primary.light"
-                                                    : "transparent",
-                                                color: chosenTags.some(tag => tag.ID === eachTag.ID)
-                                                    ? "white"
-                                                    : "text.primary",
-                                                "&:hover": {
-                                                    backgroundColor: chosenTags.some(tag => tag.ID === eachTag.ID)
-                                                        ? "primary.dark"
-                                                        : "action.hover",
-                                                },
-                                            }} onClick={() => chooseTag(eachTag.ID)}>
-                                                <TagIcon sx={{ marginRight: 1 }} />
-                                                {eachTag.Name}
+                                            <ListItemButton
+                                                key={eachTag.id}
+                                                sx={{
+                                                    minWidth: "auto",
+                                                    width: "fit-content",
+                                                    maxWidth: "120px",
+                                                    padding: "2px 6px ",
+                                                    borderRadius: 1,
+                                                    textTransform: "none",
+                                                    fontSize: "0.75rem",
+                                                    backgroundColor: chosenTags.some(tag => tag.id === eachTag.id)
+                                                        ? "gray"
+                                                        : "action.selected",
+                                                    color: chosenTags.some(tag => tag.id === eachTag.id)
+                                                        ? "white"
+                                                        : "text.primary",
+                                                    "&:hover": {
+                                                        backgroundColor: chosenTags.some(tag => tag.id === eachTag.id)
+                                                            ? "gray"
+                                                            : "action.hover",
+                                                    },
+                                                    display: "inline-flex",
+                                                    overflow: "hidden",
+                                                }}
+                                                onClick={() => chooseTag(eachTag.id)}
+                                            >
+                                                <TagIcon sx={{
+                                                    fontSize: "0.75rem", // Smaller icon
+                                                    marginRight: "4px"
+                                                }} />
+                                                <Box component="span" sx={{
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis"
+                                                }}>
+                                                    {eachTag.name}
+                                                </Box>
                                             </ListItemButton>
                                         ))}
                                     </Box>
