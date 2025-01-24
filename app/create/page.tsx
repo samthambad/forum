@@ -21,7 +21,7 @@ const CreateThreadPage = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/create", {
+            const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/api/create", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -29,7 +29,8 @@ const CreateThreadPage = () => {
                 body: JSON.stringify({
                     "Title": title,
                     "Content": content
-                })
+                }),
+                credentials: "include"
             });
             if (response.ok) {
                 const result = await response.json();
@@ -42,7 +43,6 @@ const CreateThreadPage = () => {
         } catch (error) {
             console.error("Failed to create thread:", error);
         }
-        console.log("Thread Created", { title, content });
         setTitle("");
         setContent("");
     };

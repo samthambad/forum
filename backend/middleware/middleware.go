@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"go_backend/models"
 	"net/http"
 	"os"
 
@@ -12,33 +13,26 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie("auth_token")
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-			c.Abort()
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			return
 		}
 
-		// Parse and validate token against
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok { // checks if token is signed with HMAC algo
+		// Parse into your custom Claims struct
+		claims := &models.Claims{}
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, jwt.ErrSignatureInvalid
 			}
-			return []byte(os.Getenv("JWT_SECRET")), nil
+			return []byte(os.Getenv("NEXT_PUBLIC_JWT_SECRET")), nil // Must match login secret
 		})
+
 		if err != nil || !token.Valid {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-			c.Abort()
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			return
 		}
 
-		// Extract user_id from token claims
-		if claims, ok := token.Claims.(jwt.MapClaims); ok {
-			c.Set("user_id", int(claims["user_id"].(float64)))
-		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-			c.Abort()
-			return
-		}
-
+		// Access claims.UserID directly (no type assertion needed)
+		c.Set("user_id", claims.UserID)
 		c.Next()
 	}
 }

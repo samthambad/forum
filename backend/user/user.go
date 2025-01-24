@@ -117,10 +117,16 @@ func Login(c *gin.Context) {
 	}
 	fmt.Println("user.ID", user.ID)
 	// Generate JWT token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.ID,
-		"exp":     time.Now().Add(12 * time.Hour).Unix(), // expire in 12 hours
-	})
+	// During login:
+	expirationTime := time.Now().Add(12 * time.Hour)
+	claims := &models.Claims{
+		UserID: user.ID, // Replace `user.ID` with your actual user ID (as int)
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(os.Getenv("NEXT_PUBLIC_JWT_SECRET")))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})

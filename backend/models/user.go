@@ -1,5 +1,7 @@
 package models
 
+import "github.com/golang-jwt/jwt/v4"
+
 type User struct {
 	ID    int
 	Name  string
@@ -14,4 +16,9 @@ type CreateUserType struct {
 type LoginUserType struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+type Claims struct {
+	UserID int `json:"user_id"`
+	// for timer
+	jwt.RegisteredClaims
 }
