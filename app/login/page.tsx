@@ -22,7 +22,6 @@ export default function Login() {
 
     const data = await response.json();
     if (response.ok) {
-      localStorage.setItem('auth_token', data.token); // Save token
       console.log('User logged in');
       push("/home");
     } else {
