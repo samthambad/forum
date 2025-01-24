@@ -53,11 +53,13 @@ func CreateThread(c *gin.Context) {
 		fmt.Println("Error converting user_id to int")
 		return
 	}
-	fmt.Println("user_id", user_id_int)
 	createQuery := "INSERT INTO threads (title, content, created_by) VALUES ($1, $2, $3);"
-	_, err := database.Db.Exec(createQuery, thread.Title, thread.Content)
+	_, err := database.Db.Exec(createQuery, thread.Title, thread.Content, user_id_int)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		// Log the error for debugging (do not expose to client)
+		fmt.Printf("Database error: %v\n", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create thread"})
 		return
 	}
+	c.JSON(http.StatusOK, gin.H{"message": "Thread created successfully"})
 }

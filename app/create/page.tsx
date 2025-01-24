@@ -13,11 +13,12 @@ import {
     Divider,
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
+import { useRouter } from "next/navigation";
 
 const CreateThreadPage = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-
+    const { push } = useRouter();
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -37,6 +38,7 @@ const CreateThreadPage = () => {
                 console.log("Thread created successfully:", result);
                 setTitle("");
                 setContent("");
+                push("/home")
             } else {
                 console.error("Failed to create thread.");
             }

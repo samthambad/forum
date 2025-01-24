@@ -8,7 +8,12 @@ export default function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/all_posts");
+        const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/all_posts",
+          {
+            method: "GET",
+            credentials: "include"
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
         }
