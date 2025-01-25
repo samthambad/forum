@@ -27,7 +27,6 @@ export default function Home() {
         }
 
         const data = await response.json();
-        console.log("API response data:", data);
 
         // Map the response data to match the Thread interface
         const formattedThreads: ThreadDisplay[] = data.map((item: { id: number; title: string; content: string; created_by: number; created_at: string; tags: Tag[] }) => ({
@@ -53,7 +52,6 @@ export default function Home() {
 
   if (loading) return <p>Loading...</p>;
 
-  console.log(threads)
   return (
     <Box sx={{ height: "100vh", display: "flex" }}>
       <Box
