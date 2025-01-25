@@ -135,10 +135,6 @@ export default function Home() {
                 />
               ))}
             </Box>
-            <CommentForm
-              threadId={selectedThread.id}
-              onCommentAdded={() => setRefreshComments(!refreshComments)}
-            />
 
             <CommentList
               threadId={selectedThread.id}
