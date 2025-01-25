@@ -1,8 +1,8 @@
-// components/CommentList.tsx
 import { useCallback, useEffect, useState } from 'react';
 import { Comment } from '../models/models';
 import { Box, Button, Card, CardContent, CircularProgress, Divider, TextField, Typography } from '@mui/material';
 import ReplyIcon from "@mui/icons-material/Reply"
+
 export default function CommentList({ threadId }: { threadId: number }) {
     const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(true)
@@ -72,13 +72,13 @@ export default function CommentList({ threadId }: { threadId: number }) {
     if (loading)
         return (
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-                <CircularProgress />
+                <CircularProgress color="primary" />
             </Box>
         )
 
     if (comments?.length === 0)
         return (
-            <Box textAlign="left" py={4}>
+            <Box textAlign="center" py={4}>
                 <Typography variant="body1" color="text.secondary">
                     No comments yet
                 </Typography>
@@ -86,28 +86,57 @@ export default function CommentList({ threadId }: { threadId: number }) {
         )
 
     return (
-        <Box sx={{ width: "100%", mt: 4 }}>
+        <Box sx={{
+            width: "100%",
+            maxWidth: 600,
+            mx: 'auto',
+            px: { xs: 2, sm: 0 }
+        }}>
             {comments?.map((comment) => (
-                <Card key={comment.id} sx={{ mb: 2 }}>
+                <Card
+                    key={comment.id}
+                    sx={{
+                        mb: 2,
+                        borderRadius: 2,
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                        background: 'linear-gradient(145deg, #f0f9ff, #e6f2ff)',
+                    }}
+                >
                     <CardContent>
-                        <Box display="flex" alignItems="center" mb={1}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
                             <Box>
-                                <Typography variant="subtitle1">{comment.username}</Typography>
+                                <Typography variant="subtitle2" color="primary" fontWeight="bold">
+                                    {comment.username}
+                                </Typography>
                                 <Typography variant="caption" color="text.secondary">
                                     {convertTZ(comment.created_at, "Asia/Singapore")}
                                 </Typography>
                             </Box>
                         </Box>
-                        <Typography variant="body1" sx={{ ml: 1 }}>
+                        <Typography
+                            variant="body2"
+                            color="text.primary"
+                            sx={{
+                                pl: 1,
+                                borderLeft: '3px solid',
+                                borderColor: 'primary.light'
+                            }}
+                        >
                             {comment.content}
                         </Typography>
                     </CardContent>
                 </Card>
             ))}
-            <Divider sx={{ my: 4 }} />
-            <Card>
+            <Divider sx={{ my: 3 }} />
+            <Card
+                sx={{
+                    background: 'linear-gradient(145deg, #e6fffd, #e0f2f1)',
+                    borderRadius: 2,
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                }}
+            >
                 <CardContent>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h6" gutterBottom color="primary">
                         Add a comment
                     </Typography>
                     <form onSubmit={makeComment}>
@@ -120,9 +149,24 @@ export default function CommentList({ threadId }: { threadId: number }) {
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             required
-                            sx={{ mb: 2 }}
+                            sx={{
+                                mb: 2,
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 2,
+                                }
+                            }}
                         />
-                        <Button type="submit" variant="contained" color="primary" startIcon={<ReplyIcon />}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            startIcon={<ReplyIcon />}
+                            sx={{
+                                borderRadius: 2,
+                                textTransform: 'none',
+                                fontWeight: 'bold'
+                            }}
+                        >
                             Post Comment
                         </Button>
                     </form>
