@@ -223,3 +223,82 @@ func GetComments(c *gin.Context) {
 	fmt.Println("comment(s):", comments)
 	c.JSON(http.StatusOK, comments)
 }
+
+func MyThreads(c *gin.Context) {
+	// TODO: same thing as GetAllThreads, abstract it out
+	userId, exists := c.Get("user_id")
+	if !exists {
+		fmt.Println("Error getting user_id from context")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID not found in context"})
+		return
+	}
+
+	// Convert user ID to int
+	userIdInt, ok := userId.(int)
+	if !ok {
+		fmt.Println("Error converting user_id to int")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	query := `
+    SELECT 
+        t.id, 
+        t.title, 
+        t.content, 
+        t.created_by, 
+        u.username AS created_by_username, -- Add username from users table
+        t.created_at,
+        COALESCE(
+            json_agg(
+                json_build_object('id', tg.id, 'name', tg.name)
+            ) FILTER (WHERE tg.id IS NOT NULL), 
+            '[]'
+        ) AS tags
+    FROM threads t
+    LEFT JOIN thread_tags tt ON t.id = tt.thread_id
+    LEFT JOIN tags tg ON tt.tag_id = tg.id
+    LEFT JOIN users u ON t.created_by = u.id -- Join users table to get username
+    WHERE t.created_by = $1
+    GROUP BY t.id, u.username -- Include u.username in GROUP BY
+    `
+
+	rows, err := database.Db.Query(query, userIdInt)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database query error"})
+		return
+	}
+	defer rows.Close()
+
+	var threads []models.Thread
+	for rows.Next() {
+		var thread models.Thread
+		var tagsJSON []byte // To store the raw JSON array of tags
+
+		err := rows.Scan(
+			&thread.ID,
+			&thread.Title,
+			&thread.Content,
+			&thread.CreatedBy,
+			&thread.Username,
+			&thread.CreatedAt,
+			&tagsJSON,
+		)
+		if err != nil {
+			log.Printf("Error scanning row: %v\n", err)
+			continue
+		}
+
+		if err := json.Unmarshal(tagsJSON, &thread.Tags); err != nil {
+			log.Printf("Error unmarshaling tags: %v\n", err)
+			continue
+		}
+
+		threads = append(threads, thread)
+	}
+
+	fmt.Printf("Number of threads: %d\n", len(threads))
+
+	// Return the threads as JSON
+	c.JSON(http.StatusOK, threads)
+}

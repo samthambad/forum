@@ -42,6 +42,7 @@ func main() {
 	router.GET("/api/getTags", middleware.AuthMiddleware(), thread.GetAllTags)
 	router.GET("/api/logout", user.Logout)
 	router.GET("/api/search", middleware.AuthMiddleware(), search.HandleSearch)
+	router.GET("/api/my_threads", middleware.AuthMiddleware(), thread.MyThreads)
 
 	router.POST("/api/create", middleware.AuthMiddleware(), thread.CreateThread)
 	router.POST("/api/signUp", user.CreateUser)
