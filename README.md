@@ -31,3 +31,17 @@ Threads must be tagged and are searchable for ease of access and clarity in disc
 ## Restriction One to Many Communication
 
 I believe this is the best way for knowledge sharing.
+
+## Features to be added soon
+1. Images in threads and comments
+2. Upvoting threads and comments
+3. Other user's profile page access
+4. Home page
+5. Dockerisation
+
+## Setup
+1. `npm i` to install nextjs plugins
+2. `cd backend`
+3. `go mod tidy` to install go plugins
+4. run the sql command in your SQL server from `init_tables.sql` to initialise the tables
+5. `npm run dev` in root project directory and `go run main.go` in `/backend` to start frontend and backend

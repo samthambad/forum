@@ -84,6 +84,7 @@ export default function Login() {
           }}
         >
           <TextField
+            autoComplete='off'
             label="Username"
             placeholder="Enter your username"
             variant="outlined"

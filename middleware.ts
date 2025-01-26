@@ -3,8 +3,14 @@ import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET || "your_scret";
-export async function middleware(request: Request) {
+import { NextRequest } from "next/server";
+
+export async function middleware(request: NextRequest) {
     // Use cookies() to access the cookies in the edge environment
+    if (request.nextUrl.pathname === '/') {
+        return NextResponse.redirect(new URL('/home', request.url))
+    }
+
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token"); // Get the auth_token cookie
 
@@ -34,6 +40,7 @@ export async function middleware(request: Request) {
 export const config = {
     matcher: [
         // Protect these routes
+        "/",
         "/profile",
         "/home",
         "/create"
