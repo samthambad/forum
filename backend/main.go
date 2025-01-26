@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go_backend/database"
+	"go_backend/search"
 	"net/http"
 	"os"
 
@@ -40,6 +41,7 @@ func main() {
 	router.GET("/api/all_users", user.GetUsers)
 	router.GET("/api/getTags", middleware.AuthMiddleware(), thread.GetAllTags)
 	router.GET("/api/logout", user.Logout)
+	router.GET("/api/search", middleware.AuthMiddleware(), search.HandleSearch)
 
 	router.POST("/api/create", middleware.AuthMiddleware(), thread.CreateThread)
 	router.POST("/api/signUp", user.CreateUser)
