@@ -17,6 +17,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search"
 import ClearIcon from "@mui/icons-material/Clear"
 import { Tag } from "../models/models"
+import { useRouter } from "next/navigation"
 
 interface SearchResult {
     id: number
@@ -31,6 +32,8 @@ export default function SearchBar() {
     const [selectedTags, setSelectedTags] = useState<Tag[]>([])
     const anchorRef = useRef<HTMLDivElement>(null)
     const limit = 5;
+    const router = useRouter();
+
     const fetchTags = async () => {
         const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/api/getTags", {
             method: "GET",
@@ -86,6 +89,8 @@ export default function SearchBar() {
         console.log("Selected result:", result)
         setQuery("")
         setIsOpen(false)
+        router.push(`/home?threadId=${result.id}`);
+
     }
 
     const handleClickAway = () => {

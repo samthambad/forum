@@ -5,12 +5,22 @@ import { useEffect, useState } from "react";
 import { Tag, ThreadDisplay } from "../models/models";
 import CommentList from "../components/CommentList";
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import { useSearchParams } from "next/navigation";
 
 export default function Home() {
   const [selectedThread, setSelectedThread] = useState<ThreadDisplay | null>(null);
   const [threads, setThreads] = useState<ThreadDisplay[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshComments, setRefreshComments] = useState(false);
+  const searchParams = useSearchParams(); // Get search params
+  const threadIdFromUrl = searchParams.get('threadId');
+
+  useEffect(() => {
+    if (threads.length > 0 && threadIdFromUrl) {
+      const threadId = parseInt(threadIdFromUrl, 10);
+      const foundThread = threads.find(t => t.id === threadId);
+      setSelectedThread(foundThread || null);
+    }
+  }, [threads, threadIdFromUrl]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -183,7 +193,6 @@ export default function Home() {
 
             <CommentList
               threadId={selectedThread.id}
-              key={refreshComments ? 'refresh' : 'static'}
             />
           </Paper>
         ) : (
