@@ -13,18 +13,24 @@ import (
 
 func GetAllThreads(c *gin.Context) {
 	query := `
-        SELECT 
-            t.id, t.title, t.content, t.created_by, t.created_at,
-            COALESCE(
-                json_agg(
-                    json_build_object('id', tg.id, 'name', tg.name)
-                ) FILTER (WHERE tg.id IS NOT NULL), 
-                '[]'
-            ) AS tags
-        FROM threads t
-        LEFT JOIN thread_tags tt ON t.id = tt.thread_id
-        LEFT JOIN tags tg ON tt.tag_id = tg.id
-        GROUP BY t.id
+	SELECT 
+		t.id, 
+		t.title, 
+		t.content, 
+		t.created_by, 
+		u.username AS created_by_username, -- Add username from users table
+		t.created_at,
+		COALESCE(
+			json_agg(
+				json_build_object('id', tg.id, 'name', tg.name)
+			) FILTER (WHERE tg.id IS NOT NULL), 
+			'[]'
+		) AS tags
+	FROM threads t
+	LEFT JOIN thread_tags tt ON t.id = tt.thread_id
+	LEFT JOIN tags tg ON tt.tag_id = tg.id
+	LEFT JOIN users u ON t.created_by = u.id -- Join users table to get username
+	GROUP BY t.id, u.username -- Include u.username in GROUP BY
     `
 
 	rows, err := database.Db.Query(query)
@@ -45,6 +51,7 @@ func GetAllThreads(c *gin.Context) {
 			&thread.Title,
 			&thread.Content,
 			&thread.CreatedBy,
+			&thread.Username,
 			&thread.CreatedAt,
 			&tagsJSON,
 		)

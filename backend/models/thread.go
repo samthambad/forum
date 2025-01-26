@@ -9,6 +9,7 @@ type Thread struct {
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
 	CreatedBy int       `json:"created_by"`
+	Username  string    `json: "created_by_username"`
 	CreatedAt time.Time `json:"created_at"`
 	Tags      []Tag     `json:"tags"`
 }

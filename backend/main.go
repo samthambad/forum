@@ -30,7 +30,7 @@ func main() {
 		AllowCredentials: true,                                                // Allow cookies if needed
 	}))
 	database.ConnectDatabase()
-	router.GET("/api/all_posts", middleware.AuthMiddleware(), func(c *gin.Context) {
+	router.GET("/api/all_threads", middleware.AuthMiddleware(), func(c *gin.Context) {
 		thread.GetAllThreads(c)
 	})
 	router.GET("/ping", func(c *gin.Context) {

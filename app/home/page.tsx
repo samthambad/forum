@@ -12,12 +12,13 @@ export default function Home() {
   const [threads, setThreads] = useState<ThreadDisplay[]>([]);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
-  const threadIdFromUrl = searchParams.get('threadId');
+  const threadIdFromUrl = searchParams?.get('threadId');
 
   useEffect(() => {
     if (threads.length > 0 && threadIdFromUrl) {
       const threadId = parseInt(threadIdFromUrl, 10);
       const foundThread = threads.find(t => t.id === threadId);
+      console.log("selected thread:", foundThread)
       setSelectedThread(foundThread || null);
     }
   }, [threads, threadIdFromUrl]);
@@ -26,7 +27,7 @@ export default function Home() {
     const fetchPosts = async () => {
       try {
         const response = await fetch(
-          process.env.NEXT_PUBLIC_BACKEND_URL + "/api/all_posts",
+          process.env.NEXT_PUBLIC_BACKEND_URL + "/api/all_threads",
           {
             method: "GET",
             credentials: "include"
@@ -38,16 +39,16 @@ export default function Home() {
         }
 
         const data = await response.json();
-
-        const formattedThreads: ThreadDisplay[] = data.map((item: { id: number; title: string; content: string; created_by: number; created_at: string; tags: Tag[] }) => ({
+        console.log("formatted threads", data)
+        const formattedThreads: ThreadDisplay[] = data.map((item: { id: number; title: string; content: string; created_by: number; username: string; created_at: string; tags: Tag[] }) => ({
           id: item.id,
           title: item.title,
           content: item.content,
           createdBy: item.created_by,
+          username: item.Username,
           createdAt: new Date(item.created_at),
           tags: item.tags || []
         }));
-
         setThreads(formattedThreads.sort((a, b) => b.createdAt?.getTime() - a.createdAt?.getTime()));
       } catch (err) {
         console.error("Error fetching posts:", err);
@@ -154,6 +155,7 @@ export default function Home() {
                 <PersonOutlineIcon />
               </Avatar>
               <Box>
+                <Typography>{selectedThread.username}</Typography>
                 <Typography variant="h5" gutterBottom>
                   {selectedThread.title}
                 </Typography>

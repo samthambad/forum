@@ -8,6 +8,7 @@ export interface ThreadDisplay {
     title: string,
     content: string,
     createdBy: number,
+    username: string,
     createdAt: Date,
     tags: Tag[]
 }
