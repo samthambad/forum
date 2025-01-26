@@ -1,6 +1,7 @@
 package user
 
 import (
+	"database/sql"
 	"fmt"
 	"go_backend/database"
 	"go_backend/models"
@@ -25,6 +26,36 @@ func GetUsers(c *gin.Context) {
 }
 
 func GetCurrentUser(c *gin.Context) {
+	userId, exists := c.Get("user_id")
+	if !exists {
+		fmt.Println("Error getting user_id from context")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID not found in context"})
+		return
+	}
+
+	// Convert user ID to int
+	userIdInt, ok := userId.(int)
+	if !ok {
+		fmt.Println("Error converting user_id to int")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	query := "SELECT username FROM users WHERE id = $1;"
+	var username string
+	err := database.Db.QueryRow(query, userIdInt).Scan(&username)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("No user found with the given ID")
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		} else {
+			fmt.Printf("Error querying the database: %v\n", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		}
+		return
+	}
+
+	// Respond with the username
+	c.JSON(http.StatusOK, gin.H{"username": username})
 
 }
 func GetAllUsers() ([]models.User, error) {
