@@ -37,13 +37,14 @@ func HandleSearch(c *gin.Context) {
 		return
 	}
 
+	// Execute query
 	rows, err := database.Db.Query(`
         SELECT 
-            t.id,
-            t.title,
-            LEFT(t.content, 150) AS excerpt,
-            COALESCE(ARRAY_AGG(tags.id)::integer[], ARRAY[]::integer[]) AS tags,
-            t.created_at
+		t.id,
+		t.title,
+		LEFT(t.content, 150) AS excerpt,
+		COALESCE(ARRAY_AGG(tags.id) FILTER (WHERE tags.id IS NOT NULL), ARRAY[]::integer[]) AS tags,
+		t.created_at
         FROM threads t
         LEFT JOIN thread_tags tt ON t.id = tt.thread_id
         LEFT JOIN tags ON tt.tag_id = tags.id
@@ -72,6 +73,7 @@ func HandleSearch(c *gin.Context) {
 	}
 	defer rows.Close()
 
+	// Process results
 	var results []models.SearchResult
 	for rows.Next() {
 		var result models.SearchResult
@@ -89,11 +91,11 @@ func HandleSearch(c *gin.Context) {
 			continue
 		}
 
-		// Convert to *[]int32
-		if len(tags) > 0 {
-			result.Tags = &tags
-		} else {
+		// Handle empty tags
+		if len(tags) == 0 {
 			result.Tags = nil
+		} else {
+			result.Tags = &tags
 		}
 
 		results = append(results, result)

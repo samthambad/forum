@@ -11,7 +11,7 @@ export default function Home() {
   const [selectedThread, setSelectedThread] = useState<ThreadDisplay | null>(null);
   const [threads, setThreads] = useState<ThreadDisplay[]>([]);
   const [loading, setLoading] = useState(true);
-  const searchParams = useSearchParams(); // Get search params
+  const searchParams = useSearchParams();
   const threadIdFromUrl = searchParams.get('threadId');
 
   useEffect(() => {
