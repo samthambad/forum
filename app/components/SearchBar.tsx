@@ -44,6 +44,7 @@ export default function SearchBar() {
     }
     useEffect(() => {
         fetchTags(); //only when component loads
+        setIsOpen(false)
     }, [])
 
     useEffect(() => {
@@ -68,7 +69,9 @@ export default function SearchBar() {
                 const data = await response.json();
                 console.log("search response:", data)
                 setResults(data);
-                setIsOpen(true);
+                if (data.length > 0 && (query || selectedTags.length > 0)) { // Check if there are results and if query or selectedTags have changed
+                    setIsOpen(true);
+                }
             }
         };
 
@@ -98,6 +101,7 @@ export default function SearchBar() {
         <ClickAwayListener onClickAway={handleClickAway}>
             <Box ref={anchorRef} sx={{ display: "flex", alignItems: "center", width: "100%" }}>
                 <TextField
+                    autoComplete="off"
                     value={query}
                     onChange={handleSearchChange}
                     placeholder="Search..."
@@ -175,7 +179,7 @@ export default function SearchBar() {
                     )}
                 />
                 <Popper open={isOpen} anchorEl={anchorRef.current} placement="bottom-start">
-                    <Paper elevation={3}>
+                    <Paper elevation={3} style={{ width: anchorRef.current ? anchorRef.current.clientWidth : undefined }}>
                         <List>
                             {results?.map((result) => (
                                 <ListItem key={result.id} onClick={() => handleResultClick(result)} button>
